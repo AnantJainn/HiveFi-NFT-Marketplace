@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>SafeCase NFT Marketplace – Likes & Buy</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    #status {
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
+    #upload-form, #nft-list {
+      margin-top: 20px;
+      padding: 10px;
+      border: 1px solid #ccc;
+    }
+    .nft-item {
+      border: 1px solid #ddd;
+      padding: 10px;
+      margin: 10px 0;
+    }
+    .nft-item img {
+      max-width: 200px;
+      display: block;
+      margin-bottom: 10px;
+    }
+    .hidden {
+      display: none;
+    }
+    button {
+      margin: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h1>SafeCase NFT Marketplace</h1>
+
+  <div id="status">Not logged in</div>
+  <button id="login-btn">Login with Hive</button>
+  <button id="upload-nft-btn">Upload NFT</button>
+  <button id="load-nfts-btn">Load All NFTs</button>
+
+  <!-- Upload Form (initially hidden) -->
+  <div id="upload-form" class="hidden">
+    <h3>Upload NFT</h3>
+    <input type="file" id="nft-file" accept="image/*" /><br /><br />
+    <input type="text" id="nft-title" placeholder="Title" /><br /><br />
+    <textarea id="nft-description" placeholder="Description"></textarea><br /><br />
+    <input type="text" id="nft-tags" placeholder="Comma-separated tags" /><br /><br />
+    <input type="number" id="nft-baseprice" placeholder="Base Price (HIVE)" step="0.1" /><br /><br />
+    <button id="nft-upload-submit">Submit NFT</button>
+  </div>
+
+  <!-- Container for showing all NFTs -->
+  <div id="nft-list"></div>
+
+  <!-- Hive Keychain + JavaScript logic -->
+  <script src="https://cdn.jsdelivr.net/npm/@hiveio/dhive@1.2.7/dist/dhive.min.js"></script>
+  <script>
+    let loggedInUser = "";
+    let allNFTs = [];
+
+    // Create Hive client
+    const client = new dhive.Client(["https://api.hive.blog"]);
+
+    // DOM references
+    const statusEl = document.getElementById("status");
+    const loginBtn = document.getElementById("login-btn");
+    const uploadNFTBtn = document.getElementById("upload-nft-btn");
+    const loadNFTsBtn = document.getElementById("load-nfts-btn");
+    const uploadFormEl = document.getElementById("upload-form");
+    const nftListEl = document.getElementById("nft-list");
+
+    // Attach event listeners
+    loginBtn.addEventListener("click", loginWithHive);
+    uploadNFTBtn.addEventListener("click", toggleUploadForm);
+    loadNFTsBtn.addEventListener("click", loadAllNFTs);
+    document.getElementById("nft-upload-submit").addEventListener("click", submitNFT);
+
+    // 1. Hive Keychain login
+    function loginWithHive() {
+      if (typeof hive_keychain === "undefined") {
+        alert("Hive Keychain is not installed!");
+        return;
+      }
+      const username = prompt("Enter your Hive username:");
+      if (!username) return;
+
+      const msg = `Login on ${new Date().toISOString()}`;
+      hive_keychain.requestSignBuffer(username, msg, "Posting", (res) => {
+        if (res.success) {
+          loggedInUser = username;
+          statusEl.textContent = `Logged in as ${username}`;
+        } else {
+          alert("Login failed: " + res.message);
+        }
+      });
+    }
+
+    // 2. Show/hide upload form
+    function toggleUploadForm() {
+      if (!loggedInUser) {
+        alert("Please login first.");
+        return;
+      }
+      uploadFormEl.classList.toggle("hidden");
+    }
+
+    // 3. Submit NFT form -> Upload to IPFS -> Send custom JSON
+    async function submitNFT() {
+      if (!loggedInUser) {
+        alert("Please login first.");
+        return;
+      }
+
+      const fileInput = document.getElementById("nft-file");
+      if (!fileInput.files.length) {
+        alert("Please select a file.");
+        return;
+      }
+      const file = fileInput.files[0];
+
+      const title = document.getElementById("nft-title").value.trim();
+      const desc = document.getElementById("nft-description").value.trim();
+      const tags = document.getElementById("nft-tags").value.split(",").map(t => t.trim());
+      const basePrice = parseFloat(document.getElementById("nft-baseprice").value);
+
+      if (!title || !desc || !tags.length || isNaN(basePrice)) {
+        alert("Please fill all fields.");
+        return;
+      }
+
+      // Create FormData to send to /api/nfts/uploadToIPFS
+      const formData = new FormData();
+      formData.append("file", file);
+
+      try {
+        // 3.1 Upload to IPFS via your server
+        const uploadRes = await fetch("/api/nfts/uploadToIPFS", {
+          method: "POST",
+          body: formData
+        });
+        if (!uploadRes.ok) {
+          throw new Error(`Failed to upload to IPFS: ${uploadRes.statusText}`);
+        }
+        const ipfsData = await uploadRes.json();
+        if (!ipfsData.IpfsHash) {
+          throw new Error("Pinata response missing IpfsHash");
+        }
+        const cid = ipfsData.IpfsHash;
+
+        // 3.2 Send custom JSON to Hive to store NFT metadata
+        const permlink = `safecase-${Date.now()}`;
+        const nftMetadata = {
+          cid,
+          title,
+          description: desc,
+          tags,
+          uploader: loggedInUser,
+          owner: loggedInUser,
+          basePrice,
+          voteCount: 0,
+          priceIncrement: 0.5,
+          listed: false,
+          forSale: false,
+          finalPrice: undefined,
+          permlink
+        };
+
+        hive_keychain.requestCustomJson(
+          loggedInUser,
+          "safecase_nft",
+          "Posting",
+          JSON.stringify(nftMetadata),
+          "Upload NFT",
+          (res) => {
+            if (res.success) {
+              alert("NFT uploaded to Hive successfully!");
+              loadAllNFTs(); // reload NFT list
+              fileInput.value = "";
+              document.getElementById("nft-title").value = "";
+              document.getElementById("nft-description").value = "";
+              document.getElementById("nft-tags").value = "";
+              document.getElementById("nft-baseprice").value = "";
+              uploadFormEl.classList.add("hidden");
+            } else {
+              alert("Failed to store NFT metadata on Hive: " + res.message);
+            }
+          }
+        );
+      } catch (err) {
+        console.error(err);
+        alert("Error uploading NFT: " + err.message);
+      }
+    }
+
+    // 4. Load all NFTs from the backend => GET /api/nfts
+    async function loadAllNFTs() {
+      try {
+        const response = await fetch("/api/nfts");
+        if (!response.ok) {
+          throw new Error(`Failed to load NFTs: ${response.statusText}`);
+        }
+        allNFTs = await response.json();
+        console.log("Loaded NFTs:", allNFTs);
+        renderNFTs(allNFTs);
+      } catch (err) {
+        console.error(err);
+        alert("Error loading NFTs: " + err.message);
+      }
+    }
+
+    // 5. Render NFTs in the #nft-list container
+    function renderNFTs(nfts) {
+      nftListEl.innerHTML = "";
+      // Filter out objects that lack cid/title
+      const validNFTs = nfts.filter(nft => nft.cid && nft.title);
+      if (!validNFTs.length) {
+        nftListEl.textContent = "No NFTs found.";
+        return;
+      }
+      validNFTs.forEach(nft => {
+        const div = document.createElement("div");
+        div.className = "nft-item";
+        // Compute current price from basePrice + (voteCount * priceIncrement)
+        const currentPrice = nft.basePrice + (nft.voteCount || 0) * (nft.priceIncrement || 0);
+
+        div.innerHTML = `
+          <h3>${nft.title}</h3>
+          <img src="https://gateway.pinata.cloud/ipfs/${nft.cid}" alt="${nft.title}">
+          <p>Description: ${nft.description}</p>
+          <p>Owner: ${nft.owner}</p>
+          <p>Base Price: ${nft.basePrice} HIVE</p>
+          <p>Votes: ${nft.voteCount || 0}</p>
+          <p>Current Price: ${currentPrice.toFixed(2)} HIVE</p>
+        `;
+
+        // (A) "Like" button (custom JSON vote)
+        const likeBtn = document.createElement("button");
+        likeBtn.textContent = "Like";
+        likeBtn.addEventListener("click", () => likeNFT(nft));
+        div.appendChild(likeBtn);
+
+        // (B) Listing / Sell / Buy logic
+        if (!nft.listed && nft.owner === loggedInUser) {
+          // If I'm the owner and it's never listed => "List NFT"
+          const listBtn = document.createElement("button");
+          listBtn.textContent = "List NFT";
+          listBtn.addEventListener("click", () => listNFT(nft));
+          div.appendChild(listBtn);
+        }
+        if (nft.forSale && nft.owner !== loggedInUser) {
+          // If it's for sale and I'm not the owner => "Buy NFT"
+          const buyBtn = document.createElement("button");
+          buyBtn.textContent = `Buy for ${nft.finalPrice || currentPrice} HIVE`;
+          buyBtn.addEventListener("click", () => buyNFT(nft));
+          div.appendChild(buyBtn);
+        }
+        if (!nft.forSale && nft.owner === loggedInUser && nft.listed) {
+          // If I'm the owner, it's listed, but not currently forSale => "Sell NFT"
+          const sellBtn = document.createElement("button");
+          sellBtn.textContent = "Sell NFT";
+          sellBtn.addEventListener("click", () => sellNFT(nft));
+          div.appendChild(sellBtn);
+        }
+
+        nftListEl.appendChild(div);
+      });
+    }
+
+    // 6. "Like" NFT (custom JSON, no "comment not found" error)
+    function likeNFT(nft) {
+      if (!loggedInUser) {
+        alert("Please login first.");
+        return;
+      }
+      const voteData = {
+        nftId: nft.permlink,   // or use 'nftId'
+        voter: loggedInUser,
+        timestamp: new Date().toISOString()
+      };
+      hive_keychain.requestCustomJson(
+        loggedInUser,
+        "safecase_vote", // must match your NFT_VOTE_JSON_ID
+        "Posting",
+        JSON.stringify(voteData),
+        "Like NFT",
+        (res) => {
+          if (res.success) {
+            alert("Liked NFT successfully!");
+            // Optionally reload to see updated voteCount
+            loadAllNFTs();
+          } else {
+            alert("Like failed: " + res.message);
+          }
+        }
+      );
+    }
+
+    // 7. List NFT (initial listing)
+    function listNFT(nft) {
+      if (nft.owner !== loggedInUser) {
+        alert("You do not own this NFT.");
+        return;
+      }
+      const finalPrice = nft.basePrice + (nft.voteCount || 0) * (nft.priceIncrement || 0);
+      if (!confirm(`List NFT at ${finalPrice} HIVE? Once listed, the price is locked.`)) return;
+
+      const updated = { ...nft, finalPrice, listed: true, forSale: true };
+      hive_keychain.requestCustomJson(
+        loggedInUser,
+        "safecase_nft",
+        "Posting",
+        JSON.stringify(updated),
+        "List NFT for Sale",
+        (res) => {
+          if (res.success) {
+            alert("NFT listed!");
+            loadAllNFTs();
+          } else {
+            alert("List NFT failed: " + res.message);
+          }
+        }
+      );
+    }
+
+    // 8. Buy NFT
+    function buyNFT(nft) {
+      if (!confirm(`Buy "${nft.title}" for ${nft.finalPrice || 0} HIVE?`)) return;
+      const saleData = {
+        nftId: nft.permlink,  // or 'nftId'
+        seller: nft.owner,
+        buyer: loggedInUser,
+        salePrice: nft.finalPrice || 0,
+        saleTimestamp: new Date().toISOString()
+      };
+      hive_keychain.requestCustomJson(
+        loggedInUser,
+        "safecase_nft_sale",
+        "Posting",
+        JSON.stringify(saleData),
+        "Buy NFT",
+        (res) => {
+          if (res.success) {
+            alert("Purchase success!");
+            loadAllNFTs();
+          } else {
+            alert("Purchase failed: " + res.message);
+          }
+        }
+      );
+    }
+
+    // 9. Sell NFT (resale)
+    function sellNFT(nft) {
+      if (nft.owner !== loggedInUser) {
+        alert("You do not own this NFT.");
+        return;
+      }
+      const newPrice = prompt(`Enter new sale price in HIVE for "${nft.title}":`, nft.finalPrice || nft.basePrice);
+      if (!newPrice) return;
+
+      const updated = {
+        ...nft,
+        finalPrice: parseFloat(newPrice),
+        listed: true,
+        forSale: true
+      };
+      hive_keychain.requestCustomJson(
+        loggedInUser,
+        "safecase_nft",
+        "Posting",
+        JSON.stringify(updated),
+        "Resell NFT",
+        (res) => {
+          if (res.success) {
+            alert("Resale success!");
+            loadAllNFTs();
+          } else {
+            alert("Resale failed: " + res.message);
+          }
+        }
+      );
+    }
+  </script>
+</body>
+</html>
