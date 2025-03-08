@@ -314,12 +314,15 @@
           likeBtn.addEventListener("click", () => likeNFT(nft));
           div.appendChild(likeBtn);
           // (B) Listing / Sell / Buy logic
+
+          // Only show the "List NFT" button if the NFT is NOT listed and the logged-in user is the owner.
           if (!nft.listed && nft.owner === loggedInUser) {
             const listBtn = document.createElement("button");
             listBtn.textContent = "List NFT";
             listBtn.addEventListener("click", () => listNFT(nft));
             div.appendChild(listBtn);
           }
+
           if (nft.forSale && nft.owner !== loggedInUser) {
             const buyBtn = document.createElement("button");
             buyBtn.textContent = `Buy for ${
