@@ -321,6 +321,7 @@
             listBtn.addEventListener("click", () => listNFT(nft));
             div.appendChild(listBtn);
           }
+          // If NFT is for sale and buyer is not owner, show Buy button.
           if (nft.forSale && nft.owner !== loggedInUser) {
             const buyBtn = document.createElement("button");
             buyBtn.textContent = `Buy for ${
@@ -329,6 +330,25 @@
             buyBtn.addEventListener("click", () => buyNFT(nft));
             div.appendChild(buyBtn);
           }
+          // If NFT is not for sale:
+          if (!nft.forSale) {
+            // If owner is logged-in user, show "Owned"
+            if (nft.owner === loggedInUser) {
+              const ownedLabel = document.createElement("span");
+              ownedLabel.textContent = "Owned";
+              ownedLabel.style.fontWeight = "bold";
+              ownedLabel.style.color = "#e74c3c";
+              div.appendChild(ownedLabel);
+            } else {
+              // Otherwise, show "SOLD" label.
+              const soldLabel = document.createElement("span");
+              soldLabel.textContent = "SOLD";
+              soldLabel.style.fontWeight = "bold";
+              soldLabel.style.color = "#e74c3c";
+              div.appendChild(soldLabel);
+            }
+          }
+          // If NFT is listed and owned by logged-in user, show Sell NFT button.
           if (!nft.forSale && nft.owner === loggedInUser && nft.listed) {
             const sellBtn = document.createElement("button");
             sellBtn.textContent = "Sell NFT";

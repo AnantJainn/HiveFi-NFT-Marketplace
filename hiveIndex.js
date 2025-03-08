@@ -179,24 +179,29 @@ function mergeOps(ops) {
 /**
  * Merges a single NFT object into the store (like your old mergeNFTData).
  */
-function mergeNFTData(nft) {
+function mergeNFTData(nftData) {
   // Use 'permlink' or 'nftId' as a unique key
-  let uniqueKey = nft.permlink || nft.nftId;
+  let uniqueKey = nftData.permlink || nftData.nftId;
   if (!uniqueKey) {
-    // Fallback in case user didn't set permlink
-    uniqueKey = nft._fallbackKey || `fallback-${Date.now()}-${Math.random()}`;
-    nft._fallbackKey = uniqueKey;
+    uniqueKey =
+      nftData._fallbackKey || `fallback-${Date.now()}-${Math.random()}`;
+    nftData._fallbackKey = uniqueKey;
+  }
+
+  // If this is a sale op, update the owner
+  if (nftData.buyer) {
+    nftData.owner = nftData.buyer;
+    nftData.forSale = false;
+    nftData.listed = false;
   }
 
   const existingIndex = nftStore.findIndex(
     (item) => (item.permlink || item.nftId || item._fallbackKey) === uniqueKey
   );
   if (existingIndex === -1) {
-    // New NFT
-    nftStore.push(nft);
+    nftStore.push(nftData);
   } else {
-    // Update existing NFT
-    nftStore[existingIndex] = { ...nftStore[existingIndex], ...nft };
+    nftStore[existingIndex] = { ...nftStore[existingIndex], ...nftData };
   }
 }
 
