@@ -10,39 +10,114 @@
     />
     <style>
       /* Global Styles */
+      :root {
+        --primary-color: #1a5099; /* Deep Blue */
+        --secondary-color: #4a90e2; /* Light Blue */
+        --background-color: #f5f7fa; /* Light Gray */
+        --text-color: #333333; /* Dark Gray */
+        --accent-color: #27ae60; /* Green */
+        --white: #ffffff; /* White */
+      }
       body {
         font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
         margin: 0;
-        background-color: #f2f2f2; /* Light grey */
-        color: #333;
+        background-color: var(--background-color);
+        color: var(--text-color);
       }
 
       /* Header */
-      h1 {
-        text-align: center;
-        color: #e74c3c; /* Red accent */
-        margin-top: 20px;
+      header {
+        background-color: var(--primary-color);
+        padding: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
       }
+      .logo img {
+        height: 200px; /* Adjust the height as needed */
+        width: auto; /* Maintain aspect ratio */
+      }
+      .header-buttons {
+        display: flex;
+        gap: 10px;
+      }
+      .header-buttons button {
+        background: var(--white);
+        color: var(--primary-color);
+        border: none;
+        padding: 10px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 1rem;
+        transition: transform 0.2s, box-shadow 0.2s;
+      }
+      .header-buttons button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      }
+
+      /* Hero Section */
+.hero-section {
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  color: var(--white);
+  padding: 40px 20px; /* Reduced padding */
+  text-align: center;
+}
+.hero-section h1 {
+  font-size: 2.5rem; /* Reduced font size */
+  font-weight: bold;
+  margin-bottom: 15px; /* Reduced margin */
+}
+.hero-section p {
+  font-size: 1.2rem; /* Reduced font size */
+  max-width: 800px;
+  margin: 0 auto 20px; /* Reduced margin */
+  color: rgba(255, 255, 255, 0.9);
+}
+.hero-button {
+  background: var(--white);
+  color: var(--primary-color);
+  border: none;
+  padding: 10px 25px; /* Reduced padding */
+  border-radius: 8px;
+  font-size: 1rem; /* Reduced font size */
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px; /* Reduced gap */
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.hero-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
 
       /* Status and Buttons */
       #status {
         text-align: center;
         margin: 20px 0;
         font-weight: bold;
+        font-size: 1.2rem;
       }
-
-      button {
-        background-color: #e74c3c;
-        color: #fff;
+      .button-container {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin-top: 20px;
+      }
+      .button-container button {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        color: var(--white);
         border: none;
-        padding: 10px 15px;
-        border-radius: 4px;
+        padding: 12px 24px;
+        border-radius: 8px;
+        font-size: 1rem;
         cursor: pointer;
-        margin: 5px;
+        transition: transform 0.2s, box-shadow 0.2s;
       }
-
-      button:hover {
-        background-color: #c0392b;
+      .button-container button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
       }
 
       /* Upload Form */
@@ -50,60 +125,161 @@
         max-width: 500px;
         margin: 20px auto;
         padding: 20px;
-        background-color: #ffffff;
+        background-color: var(--white);
         border: 1px solid #ddd;
         border-radius: 8px;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
       }
-
       #upload-form input[type="file"],
       #upload-form input[type="text"],
       #upload-form input[type="number"],
       #upload-form textarea {
         width: 100%;
-        padding: 8px;
+        padding: 10px;
         margin: 10px 0;
         border: 1px solid #ddd;
         border-radius: 4px;
+        font-size: 1rem;
+      }
+      #upload-form button {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        color: var(--white);
+        border: none;
+        padding: 12px 24px;
+        border-radius: 8px;
+        font-size: 1rem;
+        width: 100%;
+        cursor: pointer;
+        transition: transform 0.2s, box-shadow 0.2s;
+      }
+      #upload-form button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
       }
 
       /* NFT List */
       #nft-list {
-        max-width: 1000px;
-        margin: 20px auto;
+        max-width: 1200px;
+        margin: 40px auto;
+        padding: 20px;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
       }
-
       .nft-item {
-        background-color: #fff;
+        background-color: var(--white);
         border: 1px solid #ddd;
-        border-radius: 6px;
-        padding: 15px;
-        margin: 15px 0;
+        border-radius: 8px;
+        padding: 20px;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+        transition: transform 0.2s, box-shadow 0.2s;
       }
-
+      .nft-item:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      }
       .nft-item img {
-        max-width: 200px;
-        display: block;
+        max-width: 100%;
+        border-radius: 8px;
+        margin-bottom: 15px;
+      }
+      .nft-item h3 {
+        font-size: 1.5rem;
         margin-bottom: 10px;
+        color: var(--primary-color);
+      }
+      .nft-item p {
+        font-size: 1rem;
+        margin-bottom: 8px;
+        color: var(--text-color);
+      }
+      .nft-item button {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        color: var(--white);
+        border: none;
+        padding: 8px 16px;
         border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.9rem;
+        margin-right: 10px;
+        transition: transform 0.2s, box-shadow 0.2s;
+      }
+      .nft-item button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
       }
 
-      .hidden {
+      /* Footer */
+      footer {
+        background-color: var(--primary-color);
+        color: var(--white);
+        padding: 20px;
+        text-align: center;
+      }
+
+      /* Loading Spinner */
+      #loading-spinner {
         display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+      }
+      .spinner {
+        border: 4px solid rgba(255, 255, 255, 0.3);
+        border-top: 4px solid var(--primary-color);
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: spin 1s linear infinite;
+      }
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
       }
     </style>
     <!-- Hive and SweetAlert2 scripts -->
     <script src="https://cdn.jsdelivr.net/npm/@hiveio/dhive@1.2.7/dist/dhive.min.js"></script>
   </head>
   <body>
-    <h1>HiveFi NFT Marketplace</h1>
+    <!-- Header -->
+    <header style="background-color: var(--primary-color); padding: 20px; display: flex; align-items: center; justify-content: space-between;">
+      <!-- Logo and Text -->
+      <div class="logo" style="display: flex; align-items: center; gap: 10px;">
+        <img src="Hivefi_NFT_marketplace.png" alt="HiveFi NFT Marketplace Logo" style="height: 50px;">
+        <p style="font-size: 1.5rem; font-weight: bold; color: var(--white); margin: 0;">HiveFi NFT Marketplace</p>
+      </div>
+    
+      <!-- Login Button -->
+      <div class="header-buttons">
+        <button id="login-btn" style="background: var(--white); color: var(--primary-color); border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-size: 1rem; transition: transform 0.2s, box-shadow 0.2s;">
+          <i class="fas fa-sign-in-alt"></i> Login with Hive
+        </button>
+      </div>
+    </header>
+    
 
+    <!-- Hero Section -->
+     
+    <div class="hero-section">
+      
+      <p>Discover, Trade, and Own Unique Digital Assets on the Hive Blockchain</p>
+      <button class="hero-button">
+        <i class="fas fa-rocket"></i> Explore NFTs
+      </button>
+    </div>
+
+
+    <!-- Status and Buttons -->
     <div id="status">Not logged in</div>
-    <div style="text-align: center">
-      <button id="login-btn">Login with Hive</button>
-      <button id="upload-nft-btn">Upload NFT</button>
-      <button id="load-nfts-btn">Load All NFTs</button>
+    <div class="button-container">
+      <button id="upload-nft-btn"><i class="fas fa-upload"></i> Upload NFT</button>
+      <button id="load-nfts-btn"><i class="fas fa-sync"></i> Load All NFTs</button>
     </div>
 
     <!-- Upload Form (initially hidden) -->
@@ -111,19 +287,9 @@
       <h3>Upload NFT</h3>
       <input type="file" id="nft-file" accept="image/*" /><br /><br />
       <input type="text" id="nft-title" placeholder="Title" /><br /><br />
-      <textarea id="nft-description" placeholder="Description"></textarea
-      ><br /><br />
-      <input
-        type="text"
-        id="nft-tags"
-        placeholder="Comma-separated tags"
-      /><br /><br />
-      <input
-        type="number"
-        id="nft-baseprice"
-        placeholder="Base Price (HIVE)"
-        step="0.1"
-      /><br /><br />
+      <textarea id="nft-description" placeholder="Description"></textarea><br /><br />
+      <input type="text" id="nft-tags" placeholder="Comma-separated tags" /><br /><br />
+      <input type="number" id="nft-baseprice" placeholder="Base Price (HIVE)" step="0.1" /><br /><br />
       <button id="nft-upload-submit">Submit NFT</button>
     </div>
 

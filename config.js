@@ -9,7 +9,7 @@ module.exports = {
 
   // For indexing:
   // A list of accounts you want to scan, or handle scanning entire chain (see hiveIndex.js)
-  SCAN_ACCOUNTS: ["anantjain", "shubhangimishra"],
+  SCAN_ACCOUNTS: ["anantjain", "shubhangimishra", "shikharhive"],
 
   // The custom JSON ID used for your NFT ops
   NFT_CUSTOM_JSON_ID: "HiveFi_nft",
