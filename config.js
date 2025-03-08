@@ -12,9 +12,9 @@ module.exports = {
   SCAN_ACCOUNTS: ["anantjain", "shubhangimishra"],
 
   // The custom JSON ID used for your NFT ops
-  NFT_CUSTOM_JSON_ID: "safecase_nft",
+  NFT_CUSTOM_JSON_ID: "HiveFi_nft",
   // The custom JSON ID used for NFT sales
-  NFT_SALE_JSON_ID: "safecase_nft_sale",
+  NFT_SALE_JSON_ID: "HiveFi_nft_sale",
 
-  NFT_VOTE_JSON_ID: "safecase_vote",
+  NFT_VOTE_JSON_ID: "HiveFi_vote",
 };

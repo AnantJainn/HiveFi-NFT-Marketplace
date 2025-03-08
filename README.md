@@ -1,8 +1,8 @@
-# Hive-Blockchain-project-SafeCase-
+# Hive-Blockchain-project-HiveFi-
 
-#SafeCase
+#HiveFi
 
-SafeCase is a decentralized application (DApp) built on the Hive blockchain to provide secure, transparent, and tamper-proof management of digital assets, specifically images. It enables users to upload, edit, version, and authenticate images while maintaining an immutable history of changes. In an era where digital media can be easily manipulated, SafeCase ensures authenticity, ownership verification, and accountability.
+HiveFi is a decentralized application (DApp) built on the Hive blockchain to provide secure, transparent, and tamper-proof management of digital assets, specifically images. It enables users to upload, edit, version, and authenticate images while maintaining an immutable history of changes. In an era where digital media can be easily manipulated, HiveFi ensures authenticity, ownership verification, and accountability.
 
 #Key Features
 
@@ -21,7 +21,8 @@ SafeCase is a decentralized application (DApp) built on the Hive blockchain to p
 
 #Prerequisites
 
-Before running SafeCase, ensure you have the following installed:
+Before running HiveFi, ensure you have the following installed:
+
 1. Hive Keychain extension in your browser.
 2. A Hive blockchain account.
 3. IPFS installed for decentralized storage.

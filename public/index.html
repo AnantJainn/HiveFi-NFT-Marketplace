@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>SafeCase NFT Marketplace – Likes & Buy</title>
+    <title>HiveFi NFT Marketplace – Likes & Buy</title>
     <!-- External styles and icons -->
     <link
       rel="stylesheet"
@@ -97,7 +97,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@hiveio/dhive@1.2.7/dist/dhive.min.js"></script>
   </head>
   <body>
-    <h1>SafeCase NFT Marketplace</h1>
+    <h1>HiveFi NFT Marketplace</h1>
 
     <div id="status">Not logged in</div>
     <div style="text-align: center">
@@ -225,7 +225,7 @@
             throw new Error("Pinata response missing IpfsHash");
           }
           const cid = ipfsData.IpfsHash;
-          const permlink = `safecase-${Date.now()}`;
+          const permlink = `HiveFi-${Date.now()}`;
           const nftMetadata = {
             cid,
             title,
@@ -243,7 +243,7 @@
           };
           hive_keychain.requestCustomJson(
             loggedInUser,
-            "safecase_nft",
+            "HiveFi_nft",
             "Posting",
             JSON.stringify(nftMetadata),
             "Upload NFT",
@@ -354,7 +354,7 @@
         };
         hive_keychain.requestCustomJson(
           loggedInUser,
-          "safecase_vote",
+          "HiveFi_vote",
           "Posting",
           JSON.stringify(voteData),
           "Like NFT",
@@ -386,7 +386,7 @@
         const updated = { ...nft, finalPrice, listed: true, forSale: true };
         hive_keychain.requestCustomJson(
           loggedInUser,
-          "safecase_nft",
+          "HiveFi_nft",
           "Posting",
           JSON.stringify(updated),
           "List NFT for Sale",
@@ -402,7 +402,7 @@
       }
 
       // 8. BUY NFT with fee logic
-      const PLATFORM_WALLET = "safecasefee"; // Update with your platform wallet
+      const PLATFORM_WALLET = "HiveFifee"; // Update with your platform wallet
       async function buyNFT(nft) {
         if (!confirm(`Buy "${nft.title}" for ${nft.finalPrice || 0} HIVE?`))
           return;
@@ -474,7 +474,7 @@
           };
           hive_keychain.requestCustomJson(
             loggedInUser,
-            "safecase_nft_sale",
+            "HiveFi_nft_sale",
             "Posting",
             JSON.stringify(saleData),
             "Buy NFT",
@@ -532,7 +532,7 @@
         };
         hive_keychain.requestCustomJson(
           loggedInUser,
-          "safecase_nft",
+          "HiveFi_nft",
           "Posting",
           JSON.stringify(updated),
           "Resell NFT",
