@@ -314,7 +314,6 @@
           likeBtn.addEventListener("click", () => likeNFT(nft));
           div.appendChild(likeBtn);
           // (B) Listing / Sell / Buy logic
-
           // Only show the "List NFT" button if the NFT is NOT listed and the logged-in user is the owner.
           if (!nft.listed && nft.owner === loggedInUser) {
             const listBtn = document.createElement("button");
@@ -400,16 +399,17 @@
         );
       }
 
-      // 8. BUY NFT with fee logic (with special handling for NFTs priced at 0)
-      const PLATFORM_WALLET = "shikharhive"; // Update with your platform wallet
+      // 8. BUY NFT with fee logic
+      const PLATFORM_WALLET = "shikharhive";
       async function buyNFT(nft) {
-        // Determine the price; if not set, default to 0.
+        if (!confirm(`Buy "${nft.title}" for ${nft.finalPrice || 0} HIVE?`))
+          return;
+
+        // Determine price
         const price = nft.finalPrice || 0;
 
-        if (!confirm(`Buy "${nft.title}" for ${price} HIVE?`)) return;
-
-        // If price is 0, skip transfers and directly update NFT ownership.
-        if (price <= 0) {
+        // If price is zero, skip transfer steps and simply update NFT ownership.
+        if (price === 0) {
           const saleData = {
             nftId: nft.permlink,
             seller: nft.owner,
@@ -425,7 +425,7 @@
             "Buy NFT",
             (res) => {
               if (res.success) {
-                alert("NFT purchased successfully!");
+                alert("NFT purchased successfully (free)!");
                 loadAllNFTs();
               } else {
                 console.error("Error updating NFT ownership:", res.message);
@@ -436,7 +436,7 @@
           return;
         }
 
-        // Check liquid balance if price > 0
+        // Check liquid balance
         const liquidBalance = await getLiquidBalance(loggedInUser);
         console.log(`Liquid balance for ${loggedInUser}: ${liquidBalance}`);
         const balanceValue = parseFloat(liquidBalance.split(" ")[0]);
@@ -482,7 +482,6 @@
             "Fee transfer included in block:",
             feeTransferResult.block_num
           );
-
           const sellerTransferResult = await client.broadcast.transfer(
             sellerTransferOp,
             dhive.PrivateKey.fromString(activeKey)
