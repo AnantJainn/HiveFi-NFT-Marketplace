@@ -178,6 +178,9 @@
         transform: translateY(-5px);
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
       }
+      .hidden {
+        display: none;
+      }
       .nft-item img {
         max-width: 100%;
         border-radius: 8px;
@@ -283,15 +286,15 @@
     </div>
 
     <!-- Upload Form (initially hidden) -->
-    <div id="upload-form" class="hidden">
-      <h3>Upload NFT</h3>
-      <input type="file" id="nft-file" accept="image/*" /><br /><br />
-      <input type="text" id="nft-title" placeholder="Title" /><br /><br />
-      <textarea id="nft-description" placeholder="Description"></textarea><br /><br />
-      <input type="text" id="nft-tags" placeholder="Comma-separated tags" /><br /><br />
-      <input type="number" id="nft-baseprice" placeholder="Base Price (HIVE)" step="0.1" /><br /><br />
-      <button id="nft-upload-submit">Submit NFT</button>
-    </div>
+<div id="upload-form" class="hidden">
+  <h3>Upload NFT</h3>
+  <input type="file" id="nft-file" accept="image/*" /><br /><br />
+  <input type="text" id="nft-title" placeholder="Title" /><br /><br />
+  <textarea id="nft-description" placeholder="Description"></textarea><br /><br />
+  <input type="text" id="nft-tags" placeholder="Comma-separated tags" /><br /><br />
+  <input type="number" id="nft-baseprice" placeholder="Base Price (HIVE)" step="0.1" /><br /><br />
+  <button id="nft-upload-submit">Submit NFT</button>
+</div>
 
     <!-- Container for showing all NFTs -->
     <div id="nft-list"></div>
@@ -321,32 +324,38 @@
         .addEventListener("click", submitNFT);
 
       // 1. Hive Keychain login
-      function loginWithHive() {
-        if (typeof hive_keychain === "undefined") {
-          alert("Hive Keychain is not installed!");
-          return;
-        }
-        const username = prompt("Enter your Hive username:");
-        if (!username) return;
-        const msg = `Login on ${new Date().toISOString()}`;
-        hive_keychain.requestSignBuffer(username, msg, "Posting", (res) => {
-          if (res.success) {
-            loggedInUser = username;
-            statusEl.textContent = `Logged in as ${username}`;
-          } else {
-            alert("Login failed: " + res.message);
-          }
-        });
-      }
+      // 1. Hive Keychain login
+function loginWithHive() {
+  if (typeof hive_keychain === "undefined") {
+    alert("Hive Keychain is not installed!");
+    return;
+  }
+  const username = prompt("Enter your Hive username:");
+  if (!username) return;
+  const msg = `Login on ${new Date().toISOString()}`;
+  hive_keychain.requestSignBuffer(username, msg, "Posting", (res) => {
+    if (res.success) {
+      loggedInUser = username;
+      statusEl.textContent = `Logged in as ${username}`;
+      // Show the upload button when logged in
+      document.getElementById("upload-nft-btn").style.display = "inline-block";
+      // Ensure the upload form is hidden initially
+      uploadFormEl.classList.add("hidden");
+    } else {
+      alert("Login failed: " + res.message);
+    }
+  });
+}
 
       // 2. Show/hide upload form
-      function toggleUploadForm() {
-        if (!loggedInUser) {
-          alert("Please login first.");
-          return;
-        }
-        uploadFormEl.classList.toggle("hidden");
-      }
+      // 2. Show/hide upload form
+function toggleUploadForm() {
+  if (!loggedInUser) {
+    alert("Please login first.");
+    return;
+  }
+  uploadFormEl.classList.toggle("hidden");
+}
 
       // 3. Submit NFT form -> Upload to IPFS -> Send custom JSON
       async function submitNFT() {
