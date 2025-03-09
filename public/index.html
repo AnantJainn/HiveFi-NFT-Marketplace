@@ -123,12 +123,38 @@
   }
 
       /* Status and Buttons */
+      #status-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 20vh; /* Full viewport height */
+  text-align: center;
+  margin: 0;
+  padding: 0;
+}
       #status {
         text-align: center;
         margin: 20px 0;
         font-weight: bold;
         font-size: 1.2rem;
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        color: var(--white);
+        padding: 10px 20px;
+        border-radius: 8px;
+        
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        animation: float 3s ease-in-out infinite;
       }
+      #status.logged-in {
+  background: linear-gradient(135deg, var(--accent-color), var(--secondary-color));
+  color: var(--white);
+  padding: 12px 24px;
+  font-size: 1.5rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border: 2px solid var(--white);
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+}
       .button-container {
         display: flex;
         justify-content: center;
@@ -193,6 +219,17 @@
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 20px;
   padding: 20px;
+
+}
+.nft-item .card {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.6s;
+  transform-style: preserve-3d;
+}
+.nft-item:hover .card {
+  transform: rotateY(180deg);
 }
 .nft-item {
   background: var(--white);
@@ -201,7 +238,8 @@
   padding: 20px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s, box-shadow 0.2s;
-  animation: fadeIn 0.5s ease-in-out;
+  animation: fadeIn 0.5s ease-in-out;  
+  perspective: 1000px;
 }
 .nft-item:hover {
   transform: translateY(-5px);
@@ -240,6 +278,17 @@
         transform: translateY(-3px);
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
       }
+
+      .nft-item .front,
+.nft-item .back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+}
+.nft-item .back {
+  transform: rotateY(180deg);
+}
 
       /* Footer */
       footer {
@@ -318,12 +367,17 @@
 
 
     <!-- Status and Buttons -->
+    <!-- Status -->
+<div id="status-container">
+  <div id="status">Not logged in</div>
+</div>
+
+<!-- Buttons -->
+<div class="button-container">
+  <button id="upload-nft-btn"><i class="fas fa-upload"></i> Upload NFT</button>
+  <button id="load-nfts-btn"><i class="fas fa-sync"></i> Load All NFTs</button>
+</div>
     
-    <div id="status">Not logged in</div>
-    <div class="button-container">
-      <button id="upload-nft-btn"><i class="fas fa-upload"></i> Upload NFT</button>
-      <button id="load-nfts-btn"><i class="fas fa-sync"></i> Load All NFTs</button>
-    </div>
 
     <!-- Upload Form (initially hidden) -->
 <div id="upload-form" class="hidden">
@@ -365,7 +419,7 @@
 
       // 1. Hive Keychain login
       // 1. Hive Keychain login
-function loginWithHive() {
+      function loginWithHive() {
   if (typeof hive_keychain === "undefined") {
     alert("Hive Keychain is not installed!");
     return;
@@ -377,6 +431,7 @@ function loginWithHive() {
     if (res.success) {
       loggedInUser = username;
       statusEl.textContent = `Logged in as ${username}`;
+      statusEl.classList.add("logged-in"); // Add this line
       // Show the upload button when logged in
       document.getElementById("upload-nft-btn").style.display = "inline-block";
       // Ensure the upload form is hidden initially
