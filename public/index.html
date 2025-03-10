@@ -11,45 +11,55 @@
     <style>
       /* Global Styles */
       :root {
-        --primary-color: #1a5099; /* Deep Blue */
-        --secondary-color: #4a90e2; /* Light Blue */
-        --background-color: #f5f7fa; /* Light Gray */
-        --text-color: #333333; /* Dark Gray */
-        --accent-color: #27ae60; /* Green */
-        --white: #ffffff; /* White */
+        --bg-color: #0a192f; /* Dark navy blue background */
+        --glass-bg: rgba(255, 255, 255, 0.1); /* Glass card background */
+        --glass-blur: 10px;
+        --red: #e74c3c;
+        --bright-blue: #00ffff;
+        --white: #ffffff;
+        --text-color: #ffffff;
       }
       body {
         font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
         margin: 0;
-        background-color: var(--background-color);
+        background-color: var(--bg-color);
         color: var(--text-color);
       }
 
       /* Header */
       header {
-        background-color: var(--primary-color);
+        background: var(--bg-color);
         padding: 20px;
         display: flex;
         align-items: center;
         justify-content: space-between;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
       }
       .logo img {
-  height: 80px;
-  width: auto;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease;
-}
-.logo img:hover {
-  transform: scale(1.1);
-  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.8));
-}
+        height: 80px;
+        width: auto;
+        transition: transform 0.3s ease;
+      }
+      .logo img:hover {
+        transform: scale(1.1);
+        filter: drop-shadow(0 0 10px var(--bright-blue));
+      }
+      .logo p {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: var(--white);
+        margin: 0;
+      }
       .header-buttons {
         display: flex;
         gap: 10px;
       }
       .header-buttons button {
         background: var(--white);
-        color: var(--primary-color);
+        color: var(--bg-color);
         border: none;
         padding: 10px 20px;
         border-radius: 8px;
@@ -59,102 +69,89 @@
       }
       .header-buttons button:hover {
         transform: translateY(-3px);
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
       }
 
       /* Hero Section */
-  .hero-section {
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-    color: var(--white);
-    padding: 60px 20px;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .hero-section::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
-    animation: moveBackground 10s linear infinite;
-  }
-
-  .hero-section h1 {
-    font-size: clamp(2rem, 8vw, 4rem);
-    font-weight: bold;
-    margin-bottom: 20px;
-    animation: float 3s ease-in-out infinite;
-  }
-  .hero-section p {
-    font-size: clamp(1rem, 4vw, 1.5rem);
-    max-width: 800px;
-    margin: 0 auto 40px;
-    color: rgba(255, 255, 255, 0.9);
-    animation: float 3s ease-in-out infinite;
-    animation-delay: 0.5s;
-  }
-  .hero-button {
-    background: var(--white);
-    color: var(--primary-color);
-    border: none;
-    padding: 12px 30px;
-    border-radius: 8px;
-    font-size: 1.2rem;
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    transition: transform 0.2s, box-shadow 0.2s;
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-    animation: float 3s ease-in-out infinite;
-    animation-delay: 1s;
-  }
-  .hero-button:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
-  }
-  @keyframes float {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
-  }
+      .hero-section {
+        background: linear-gradient(135deg, var(--red), var(--bright-blue));
+        color: var(--white);
+        padding: 60px 20px;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+      }
+      .hero-section::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.05);
+      }
+      .hero-section h1,
+      .hero-section h2 {
+        font-size: clamp(2rem, 8vw, 4rem);
+        font-weight: bold;
+        margin-bottom: 20px;
+      }
+      .hero-section p {
+        font-size: clamp(1rem, 4vw, 1.5rem);
+        max-width: 800px;
+        margin: 0 auto 40px;
+        color: rgba(255, 255, 255, 0.9);
+      }
+      .hero-button {
+        background: var(--white);
+        color: var(--bg-color);
+        border: none;
+        padding: 12px 30px;
+        border-radius: 8px;
+        font-size: 1.2rem;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        transition: transform 0.2s, box-shadow 0.2s;
+        box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+      }
+      .hero-button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
+      }
 
       /* Status and Buttons */
       #status-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 20vh; /* Full viewport height */
-  text-align: center;
-  margin: 0;
-  padding: 0;
-}
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 20vh;
+        text-align: center;
+        margin: 0;
+        padding: 0;
+      }
       #status {
         text-align: center;
         margin: 20px 0;
         font-weight: bold;
         font-size: 1.2rem;
-        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        background: linear-gradient(135deg, var(--red), var(--bright-blue));
         color: var(--white);
         padding: 10px 20px;
         border-radius: 8px;
-        
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        animation: float 3s ease-in-out infinite;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
       }
       #status.logged-in {
-  background: linear-gradient(135deg, var(--accent-color), var(--secondary-color));
-  color: var(--white);
-  padding: 12px 24px;
-  font-size: 1.5rem;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  border: 2px solid var(--white);
-  box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
-}
+        background: linear-gradient(135deg, var(--bright-blue), var(--red));
+        color: var(--white);
+        padding: 12px 24px;
+        font-size: 1.5rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        border: 2px solid var(--white);
+        box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+      }
       .button-container {
         display: flex;
         justify-content: center;
@@ -162,7 +159,7 @@
         margin-top: 20px;
       }
       .button-container button {
-        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        background: linear-gradient(135deg, var(--red), var(--bright-blue));
         color: var(--white);
         border: none;
         padding: 12px 24px;
@@ -173,7 +170,7 @@
       }
       .button-container button:hover {
         transform: translateY(-3px);
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
       }
 
       /* Upload Form */
@@ -181,10 +178,11 @@
         max-width: 500px;
         margin: 20px auto;
         padding: 20px;
-        background-color: var(--white);
-        border: 1px solid #ddd;
+        background: var(--glass-bg);
+        backdrop-filter: blur(var(--glass-blur));
+        border: 1px solid rgba(255, 255, 255, 0.2);
         border-radius: 8px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
       }
       #upload-form input[type="file"],
       #upload-form input[type="text"],
@@ -193,12 +191,14 @@
         width: 100%;
         padding: 10px;
         margin: 10px 0;
-        border: 1px solid #ddd;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.3);
         border-radius: 4px;
         font-size: 1rem;
+        color: var(--white);
       }
       #upload-form button {
-        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        background: linear-gradient(135deg, var(--red), var(--bright-blue));
         color: var(--white);
         border: none;
         padding: 12px 24px;
@@ -210,43 +210,31 @@
       }
       #upload-form button:hover {
         transform: translateY(-3px);
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
       }
 
       /* NFT List */
       #nft-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 20px;
-  padding: 20px;
-
-}
-.nft-item .card {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  transition: transform 0.6s;
-  transform-style: preserve-3d;
-}
-.nft-item:hover .card {
-  transform: rotateY(180deg);
-}
-.nft-item {
-  background: var(--white);
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 20px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: transform 0.2s, box-shadow 0.2s;
-  animation: fadeIn 0.5s ease-in-out;  
-  perspective: 1000px;
-}
-.nft-item:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-}
-      .hidden {
-        display: none;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+        padding: 20px;
+      }
+      .nft-item {
+        background: var(--glass-bg);
+        backdrop-filter: blur(var(--glass-blur));
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+        transition: transform 0.2s, box-shadow 0.2s;
+        animation: fadeIn 0.5s ease-in-out;
+        position: relative;
+        overflow: hidden;
+      }
+      .nft-item:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.6);
       }
       .nft-item img {
         max-width: 100%;
@@ -256,15 +244,15 @@
       .nft-item h3 {
         font-size: 1.5rem;
         margin-bottom: 10px;
-        color: var(--primary-color);
+        color: var(--red);
       }
       .nft-item p {
         font-size: 1rem;
         margin-bottom: 8px;
-        color: var(--text-color);
+        color: var(--white);
       }
       .nft-item button {
-        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        background: linear-gradient(135deg, var(--red), var(--bright-blue));
         color: var(--white);
         border: none;
         padding: 8px 16px;
@@ -276,23 +264,12 @@
       }
       .nft-item button:hover {
         transform: translateY(-3px);
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
       }
-
-      .nft-item .front,
-.nft-item .back {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  backface-visibility: hidden;
-}
-.nft-item .back {
-  transform: rotateY(180deg);
-}
 
       /* Footer */
       footer {
-        background-color: var(--primary-color);
+        background: var(--bg-color);
         color: var(--white);
         padding: 20px;
         text-align: center;
@@ -313,82 +290,91 @@
       }
       .spinner {
         border: 4px solid rgba(255, 255, 255, 0.3);
-        border-top: 4px solid var(--primary-color);
+        border-top: 4px solid var(--bright-blue);
         border-radius: 50%;
         width: 40px;
         height: 40px;
         animation: spin 1s linear infinite;
       }
       @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
       }
-      @keyframes moveBackground {
-    0% { transform: translateX(-100%); }
-    100% { transform: translateX(100%); }
-  }
-
-  @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
     </style>
     <!-- Hive and SweetAlert2 scripts -->
     <script src="https://cdn.jsdelivr.net/npm/@hiveio/dhive@1.2.7/dist/dhive.min.js"></script>
   </head>
   <body>
     <!-- Header -->
-    <header style="background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); padding: 20px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); position: sticky; top: 0; z-index: 1000;">
-      <!-- Logo and Text -->
-      <div class="logo" style="display: flex; align-items: center; gap: 10px;">
-        <img src="Hivefi_logo.png" alt="HiveFi NFT Marketplace Logo" style="height: 80px; transition: transform 0.3s ease;">
-        <p style="font-size: 1.5rem; font-weight: bold; color: var(--white); margin: 0;">HiveFi NFT Marketplace</p>
+    <header>
+      <div class="logo" style="display: flex; align-items: center; gap: 10px">
+        <img src="Hivefi_logo.png" alt="HiveFi NFT Marketplace Logo" />
+        <p>HiveFi NFT Marketplace</p>
       </div>
-    
-      <!-- Login Button -->
       <div class="header-buttons">
-        <button id="login-btn" style="background: var(--white); color: var(--primary-color); border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-size: 1rem; transition: transform 0.2s, box-shadow 0.2s;">
+        <button id="login-btn">
           <i class="fas fa-sign-in-alt"></i> Login with Hive
         </button>
       </div>
     </header>
-    
-    
 
     <!-- Hero Section -->
-     
     <div class="hero-section">
-      
-      <p>Discover, Trade, and Own Unique Digital Assets on the Hive Blockchain</p>
+      <h2>
+        Discover, Trade, and Own Unique Digital Assets on the Hive Blockchain
+      </h2>
       <button class="hero-button">
         <i class="fas fa-rocket"></i> Explore NFTs
       </button>
     </div>
 
-
     <!-- Status and Buttons -->
-    <!-- Status -->
-<div id="status-container">
-  <div id="status">Not logged in</div>
-</div>
-
-<!-- Buttons -->
-<div class="button-container">
-  <button id="upload-nft-btn"><i class="fas fa-upload"></i> Upload NFT</button>
-  <button id="load-nfts-btn"><i class="fas fa-sync"></i> Load All NFTs</button>
-</div>
-    
+    <div id="status-container">
+      <div id="status">Not logged in</div>
+    </div>
+    <div class="button-container">
+      <button id="upload-nft-btn">
+        <i class="fas fa-upload"></i> Upload NFT
+      </button>
+      <button id="load-nfts-btn">
+        <i class="fas fa-sync"></i> Load All NFTs
+      </button>
+    </div>
 
     <!-- Upload Form (initially hidden) -->
-<div id="upload-form" class="hidden">
-  <h3>Upload NFT</h3>
-  <input type="file" id="nft-file" accept="image/*" /><br /><br />
-  <input type="text" id="nft-title" placeholder="Title" /><br /><br />
-  <textarea id="nft-description" placeholder="Description"></textarea><br /><br />
-  <input type="text" id="nft-tags" placeholder="Comma-separated tags" /><br /><br />
-  <input type="number" id="nft-baseprice" placeholder="Base Price (HIVE)" step="0.1" /><br /><br />
-  <button id="nft-upload-submit">Submit NFT</button>
-</div>
+    <div id="upload-form" class="hidden">
+      <h3>Upload NFT</h3>
+      <input type="file" id="nft-file" accept="image/*" /><br /><br />
+      <input type="text" id="nft-title" placeholder="Title" /><br /><br />
+      <textarea id="nft-description" placeholder="Description"></textarea
+      ><br /><br />
+      <input
+        type="text"
+        id="nft-tags"
+        placeholder="Comma-separated tags"
+      /><br /><br />
+      <input
+        type="number"
+        id="nft-baseprice"
+        placeholder="Base Price (HIVE)"
+        step="0.1"
+      /><br /><br />
+      <button id="nft-upload-submit">Submit NFT</button>
+    </div>
 
     <!-- Container for showing all NFTs -->
     <div id="nft-list"></div>
@@ -418,39 +404,38 @@
         .addEventListener("click", submitNFT);
 
       // 1. Hive Keychain login
-      // 1. Hive Keychain login
       function loginWithHive() {
-  if (typeof hive_keychain === "undefined") {
-    alert("Hive Keychain is not installed!");
-    return;
-  }
-  const username = prompt("Enter your Hive username:");
-  if (!username) return;
-  const msg = `Login on ${new Date().toISOString()}`;
-  hive_keychain.requestSignBuffer(username, msg, "Posting", (res) => {
-    if (res.success) {
-      loggedInUser = username;
-      statusEl.textContent = `Logged in as ${username}`;
-      statusEl.classList.add("logged-in"); // Add this line
-      // Show the upload button when logged in
-      document.getElementById("upload-nft-btn").style.display = "inline-block";
-      // Ensure the upload form is hidden initially
-      uploadFormEl.classList.add("hidden");
-    } else {
-      alert("Login failed: " + res.message);
-    }
-  });
-}
+        if (typeof hive_keychain === "undefined") {
+          alert("Hive Keychain is not installed!");
+          return;
+        }
+        const username = prompt("Enter your Hive username:");
+        if (!username) return;
+        const msg = `Login on ${new Date().toISOString()}`;
+        hive_keychain.requestSignBuffer(username, msg, "Posting", (res) => {
+          if (res.success) {
+            loggedInUser = username;
+            statusEl.textContent = `Logged in as ${username}`;
+            statusEl.classList.add("logged-in");
+            // Show the upload button when logged in
+            document.getElementById("upload-nft-btn").style.display =
+              "inline-block";
+            // Ensure the upload form is hidden initially
+            uploadFormEl.classList.add("hidden");
+          } else {
+            alert("Login failed: " + res.message);
+          }
+        });
+      }
 
       // 2. Show/hide upload form
-      // 2. Show/hide upload form
-function toggleUploadForm() {
-  if (!loggedInUser) {
-    alert("Please login first.");
-    return;
-  }
-  uploadFormEl.classList.toggle("hidden");
-}
+      function toggleUploadForm() {
+        if (!loggedInUser) {
+          alert("Please login first.");
+          return;
+        }
+        uploadFormEl.classList.toggle("hidden");
+      }
 
       // 3. Submit NFT form -> Upload to IPFS -> Send custom JSON
       async function submitNFT() {
@@ -506,7 +491,7 @@ function toggleUploadForm() {
             basePrice,
             voteCount: 0,
             priceIncrement: 0.5,
-            listed: false,
+            listed: false, // Not listed initially so owner can gather likes
             forSale: false,
             finalPrice: undefined,
             permlink,
@@ -521,11 +506,13 @@ function toggleUploadForm() {
               if (res.success) {
                 alert("NFT uploaded to Hive successfully!");
                 loadAllNFTs(); // reload NFT list
+                // Clear form
                 fileInput.value = "";
                 document.getElementById("nft-title").value = "";
                 document.getElementById("nft-description").value = "";
                 document.getElementById("nft-tags").value = "";
                 document.getElementById("nft-baseprice").value = "";
+                // Hide upload form
                 uploadFormEl.classList.add("hidden");
               } else {
                 alert("Failed to store NFT metadata on Hive: " + res.message);
@@ -565,6 +552,7 @@ function toggleUploadForm() {
         validNFTs.forEach((nft) => {
           const div = document.createElement("div");
           div.className = "nft-item";
+          // Calculate current/final price based on votes
           const currentPrice =
             nft.basePrice + (nft.voteCount || 0) * (nft.priceIncrement || 0);
           div.innerHTML = `
@@ -578,19 +566,21 @@ function toggleUploadForm() {
             <p>Votes: ${nft.voteCount || 0}</p>
             <p>Current Price: ${currentPrice.toFixed(2)} HIVE</p>
           `;
-          // (A) "Like" button
+          // (A) "Like" button: Always available for any NFT to gather votes
           const likeBtn = document.createElement("button");
           likeBtn.textContent = "Like";
           likeBtn.addEventListener("click", () => likeNFT(nft));
           div.appendChild(likeBtn);
+
           // (B) Listing / Sell / Buy logic
-          // Only show the "List NFT" button if the NFT is NOT listed and the logged-in user is the owner.
+          // If NFT is not yet listed, let the owner list it.
           if (!nft.listed && nft.owner === loggedInUser) {
             const listBtn = document.createElement("button");
             listBtn.textContent = "List NFT";
             listBtn.addEventListener("click", () => listNFT(nft));
             div.appendChild(listBtn);
           }
+
           // If NFT is for sale and buyer is not owner, show Buy button.
           if (nft.forSale && nft.owner !== loggedInUser) {
             const buyBtn = document.createElement("button");
@@ -600,30 +590,31 @@ function toggleUploadForm() {
             buyBtn.addEventListener("click", () => buyNFT(nft));
             div.appendChild(buyBtn);
           }
+
           // If NFT is not for sale:
           if (!nft.forSale) {
-            // If owner is logged-in user, show "Owned"
+            // If owner is logged-in user, show "Owned" (they can still opt to resell)
             if (nft.owner === loggedInUser) {
               const ownedLabel = document.createElement("span");
               ownedLabel.textContent = "Owned";
               ownedLabel.style.fontWeight = "bold";
               ownedLabel.style.color = "#e74c3c";
               div.appendChild(ownedLabel);
+              // Allow resell if the owner wishes, after gathering additional likes
+              const resellBtn = document.createElement("button");
+              resellBtn.textContent = "Resell NFT";
+              resellBtn.addEventListener("click", () => sellNFT(nft));
+              div.appendChild(resellBtn);
             } else {
-              // Otherwise, show "SOLD" label.
+              // Otherwise, show "SOLD" with final price if available
               const soldLabel = document.createElement("span");
-              soldLabel.textContent = "SOLD";
+              soldLabel.textContent = `SOLD at ${
+                nft.finalPrice || currentPrice
+              } HIVE`;
               soldLabel.style.fontWeight = "bold";
               soldLabel.style.color = "#e74c3c";
               div.appendChild(soldLabel);
             }
-          }
-          // If NFT is listed and owned by logged-in user, show Sell NFT button.
-          if (!nft.forSale && nft.owner === loggedInUser && nft.listed) {
-            const sellBtn = document.createElement("button");
-            sellBtn.textContent = "Sell NFT";
-            sellBtn.addEventListener("click", () => sellNFT(nft));
-            div.appendChild(sellBtn);
           }
           nftListEl.appendChild(div);
         });
@@ -663,6 +654,7 @@ function toggleUploadForm() {
           alert("You do not own this NFT.");
           return;
         }
+        // Calculate final price based on current votes
         const finalPrice =
           nft.basePrice + (nft.voteCount || 0) * (nft.priceIncrement || 0);
         if (
@@ -695,10 +687,8 @@ function toggleUploadForm() {
         if (!confirm(`Buy "${nft.title}" for ${nft.finalPrice || 0} HIVE?`))
           return;
 
-        // Determine price
         const price = nft.finalPrice || 0;
-
-        // If price is zero, skip transfer steps and simply update NFT ownership.
+        // If price is zero, update ownership directly
         if (price === 0) {
           const saleData = {
             nftId: nft.permlink,
@@ -718,7 +708,6 @@ function toggleUploadForm() {
                 alert("NFT purchased successfully (free)!");
                 loadAllNFTs();
               } else {
-                console.error("Error updating NFT ownership:", res.message);
                 alert("Failed to update NFT ownership: " + res.message);
               }
             }
@@ -735,7 +724,7 @@ function toggleUploadForm() {
           return;
         }
 
-        // Prompt for active key
+        // Prompt for active key for transfer
         const activeKey = prompt(
           "Enter your active private key to authorize the transfer:"
         );
@@ -781,7 +770,7 @@ function toggleUploadForm() {
             sellerTransferResult.block_num
           );
 
-          // Now update NFT ownership via custom JSON.
+          // Update NFT ownership via custom JSON.
           const saleData = {
             nftId: nft.permlink,
             seller: nft.owner,
@@ -800,7 +789,6 @@ function toggleUploadForm() {
                 alert("NFT purchased successfully!");
                 loadAllNFTs();
               } else {
-                console.error("Error updating NFT ownership:", res.message);
                 alert(
                   "Funds transferred, but failed to update NFT ownership: " +
                     res.message
@@ -838,12 +826,14 @@ function toggleUploadForm() {
         }
         const newPrice = prompt(
           `Enter new sale price in HIVE for "${nft.title}":`,
-          nft.finalPrice || nft.basePrice
+          nft.basePrice
         );
         if (!newPrice) return;
+        // For resale, new votes will be added to the previous ones so the final price will be recalculated
         const updated = {
           ...nft,
-          finalPrice: parseFloat(newPrice),
+          finalPrice:
+            nft.basePrice + (nft.voteCount || 0) * (nft.priceIncrement || 0),
           listed: true,
           forSale: true,
         };
