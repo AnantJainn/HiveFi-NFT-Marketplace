@@ -404,6 +404,7 @@
         .addEventListener("click", submitNFT);
 
       // 1. Hive Keychain login
+      // 1. Hive Keychain login
       function loginWithHive() {
         if (typeof hive_keychain === "undefined") {
           alert("Hive Keychain is not installed!");
@@ -416,7 +417,7 @@
           if (res.success) {
             loggedInUser = username;
             statusEl.textContent = `Logged in as ${username}`;
-            statusEl.classList.add("logged-in");
+            statusEl.classList.add("logged-in"); // Add this line
             // Show the upload button when logged in
             document.getElementById("upload-nft-btn").style.display =
               "inline-block";
@@ -428,6 +429,7 @@
         });
       }
 
+      // 2. Show/hide upload form
       // 2. Show/hide upload form
       function toggleUploadForm() {
         if (!loggedInUser) {
@@ -491,7 +493,7 @@
             basePrice,
             voteCount: 0,
             priceIncrement: 0.5,
-            listed: false, // Not listed initially so owner can gather likes
+            listed: false,
             forSale: false,
             finalPrice: undefined,
             permlink,
@@ -506,13 +508,11 @@
               if (res.success) {
                 alert("NFT uploaded to Hive successfully!");
                 loadAllNFTs(); // reload NFT list
-                // Clear form
                 fileInput.value = "";
                 document.getElementById("nft-title").value = "";
                 document.getElementById("nft-description").value = "";
                 document.getElementById("nft-tags").value = "";
                 document.getElementById("nft-baseprice").value = "";
-                // Hide upload form
                 uploadFormEl.classList.add("hidden");
               } else {
                 alert("Failed to store NFT metadata on Hive: " + res.message);
@@ -552,35 +552,32 @@
         validNFTs.forEach((nft) => {
           const div = document.createElement("div");
           div.className = "nft-item";
-          // Calculate current/final price based on votes
           const currentPrice =
             nft.basePrice + (nft.voteCount || 0) * (nft.priceIncrement || 0);
           div.innerHTML = `
-            <h3>${nft.title}</h3>
-            <img src="https://gateway.pinata.cloud/ipfs/${nft.cid}" alt="${
-            nft.title
-          }">
-            <p>Description: ${nft.description}</p>
-            <p>Owner: ${nft.owner}</p>
-            <p>Base Price: ${nft.basePrice} HIVE</p>
-            <p>Votes: ${nft.voteCount || 0}</p>
-            <p>Current Price: ${currentPrice.toFixed(2)} HIVE</p>
-          `;
-          // (A) "Like" button: Always available for any NFT to gather votes
+                  <h3>${nft.title}</h3>
+                  <img src="https://gateway.pinata.cloud/ipfs/${
+                    nft.cid
+                  }" alt="${nft.title}">
+                  <p>Description: ${nft.description}</p>
+                  <p>Owner: ${nft.owner}</p>
+                  <p>Base Price: ${nft.basePrice} HIVE</p>
+                  <p>Votes: ${nft.voteCount || 0}</p>
+                  <p>Current Price: ${currentPrice.toFixed(2)} HIVE</p>
+                `;
+          // (A) "Like" button
           const likeBtn = document.createElement("button");
           likeBtn.textContent = "Like";
           likeBtn.addEventListener("click", () => likeNFT(nft));
           div.appendChild(likeBtn);
-
           // (B) Listing / Sell / Buy logic
-          // If NFT is not yet listed, let the owner list it.
+          // Only show the "List NFT" button if the NFT is NOT listed and the logged-in user is the owner.
           if (!nft.listed && nft.owner === loggedInUser) {
             const listBtn = document.createElement("button");
             listBtn.textContent = "List NFT";
             listBtn.addEventListener("click", () => listNFT(nft));
             div.appendChild(listBtn);
           }
-
           // If NFT is for sale and buyer is not owner, show Buy button.
           if (nft.forSale && nft.owner !== loggedInUser) {
             const buyBtn = document.createElement("button");
@@ -590,31 +587,32 @@
             buyBtn.addEventListener("click", () => buyNFT(nft));
             div.appendChild(buyBtn);
           }
-
           // If NFT is not for sale:
           if (!nft.forSale) {
-            // If owner is logged-in user, show "Owned" (they can still opt to resell)
+            // If owner is logged-in user, show "Owned"
             if (nft.owner === loggedInUser) {
               const ownedLabel = document.createElement("span");
               ownedLabel.textContent = "Owned";
               ownedLabel.style.fontWeight = "bold";
               ownedLabel.style.color = "#e74c3c";
               div.appendChild(ownedLabel);
-              // Allow resell if the owner wishes, after gathering additional likes
-              const resellBtn = document.createElement("button");
-              resellBtn.textContent = "Resell NFT";
-              resellBtn.addEventListener("click", () => sellNFT(nft));
-              div.appendChild(resellBtn);
             } else {
-              // Otherwise, show "SOLD" with final price if available
+              // Otherwise, show "SOLD" label.
               const soldLabel = document.createElement("span");
               soldLabel.textContent = `SOLD at ${
                 nft.finalPrice || currentPrice
-              } HIVE`;
+              } HIVE`;
               soldLabel.style.fontWeight = "bold";
               soldLabel.style.color = "#e74c3c";
               div.appendChild(soldLabel);
             }
+          }
+          // If NFT is listed and owned by logged-in user, show Sell NFT button.
+          if (!nft.forSale && nft.owner === loggedInUser && nft.listed) {
+            const sellBtn = document.createElement("button");
+            sellBtn.textContent = "Sell NFT";
+            sellBtn.addEventListener("click", () => sellNFT(nft));
+            div.appendChild(sellBtn);
           }
           nftListEl.appendChild(div);
         });
@@ -654,7 +652,6 @@
           alert("You do not own this NFT.");
           return;
         }
-        // Calculate final price based on current votes
         const finalPrice =
           nft.basePrice + (nft.voteCount || 0) * (nft.priceIncrement || 0);
         if (
@@ -687,8 +684,10 @@
         if (!confirm(`Buy "${nft.title}" for ${nft.finalPrice || 0} HIVE?`))
           return;
 
+        // Determine price
         const price = nft.finalPrice || 0;
-        // If price is zero, update ownership directly
+
+        // If price is zero, skip transfer steps and simply update NFT ownership.
         if (price === 0) {
           const saleData = {
             nftId: nft.permlink,
@@ -708,6 +707,7 @@
                 alert("NFT purchased successfully (free)!");
                 loadAllNFTs();
               } else {
+                console.error("Error updating NFT ownership:", res.message);
                 alert("Failed to update NFT ownership: " + res.message);
               }
             }
@@ -724,7 +724,7 @@
           return;
         }
 
-        // Prompt for active key for transfer
+        // Prompt for active key
         const activeKey = prompt(
           "Enter your active private key to authorize the transfer:"
         );
@@ -770,7 +770,7 @@
             sellerTransferResult.block_num
           );
 
-          // Update NFT ownership via custom JSON.
+          // Now update NFT ownership via custom JSON.
           const saleData = {
             nftId: nft.permlink,
             seller: nft.owner,
@@ -789,6 +789,7 @@
                 alert("NFT purchased successfully!");
                 loadAllNFTs();
               } else {
+                console.error("Error updating NFT ownership:", res.message);
                 alert(
                   "Funds transferred, but failed to update NFT ownership: " +
                     res.message
@@ -826,14 +827,12 @@
         }
         const newPrice = prompt(
           `Enter new sale price in HIVE for "${nft.title}":`,
-          nft.basePrice
+          nft.finalPrice || nft.basePrice
         );
         if (!newPrice) return;
-        // For resale, new votes will be added to the previous ones so the final price will be recalculated
         const updated = {
           ...nft,
-          finalPrice:
-            nft.basePrice + (nft.voteCount || 0) * (nft.priceIncrement || 0),
+          finalPrice: parseFloat(newPrice),
           listed: true,
           forSale: true,
         };
